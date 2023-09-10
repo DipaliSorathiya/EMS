@@ -32,17 +32,9 @@ userSchema.pre('save', async function(next){
     next();
 });
 
+userSchema.methods.comparePassword = async function (password) {
+    const result = await bcrypt.compare(password, this.password);
+    return result;
+};
 
-module.exports = mongoose.model('User',userSchema);
-
-exports.verifyEmail = async (req,res) =>{
-    const {userId,OTP} = req.body;
-
-    if(!isValidaObjectId(userId)) return res.json({error:"Invalid user!"});
-    await user.findById(userId)
-    if(!user) return res.json({error:"user not found!"});
-    if(user.isVerified) return res.json({error:"user is already verified!"});
-
-    const token = await emailVerificationToken.findOne({owner:userId});
-    if(!token) return res.json({error:"token not found!"});
-}
+module.exports = mongoose.model('User', userSchema)
